@@ -39,6 +39,7 @@ jobs:
 
       - run: ./scripts/build-img-ci.sh
       - run: sudo chmod a+rw ./data/img/*.img
+      - run: sudo chmod a+rwx ./data/img/
 
       - run: xz -9v ./data/img/nixos-test.img
 
