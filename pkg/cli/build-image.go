@@ -50,6 +50,8 @@ func buildImg(c *cmdBuildImg) {
 		}
 		nixCacheUrl = fmt.Sprintf("http://%s:8000", hostIp)
 		log.Debug().Str("hostIp", hostIp).Str("nixCacheUrl", nixCacheUrl).Send()
+	} else {
+		nixCacheUrl = "https://cache.nixos.org"
 	}
 
 	dirBuildImg := fmt.Sprintf("%s/build-img", common.DirLog)
@@ -76,7 +78,14 @@ func buildImg(c *cmdBuildImg) {
 	log.Debug().Strs("nodes", nodes).Send()
 
 	_, err := gexec.Run(
-		gexec.Command("docker build --quiet -t 117503445/nix-builder -f ./scripts/docker/nix.Dockerfile ."),
+		// gexec.Command("docker build --quiet -t 117503445/nix-builder -f ./scripts/docker/nix.Dockerfile ."),
+		gexec.Commands([]string{
+			"docker", "build", "--quiet",
+			"-t", "117503445/nix-builder",
+			"-f", "./scripts/docker/nix.Dockerfile",
+			"--build-arg", "BASE_IMAGE=" + c.NixBaseImage,
+			".",
+		}),
 	)
 	if err != nil {
 		log.Fatal().Err(err).Send()

@@ -9,6 +9,7 @@ import (
 type cmdBuildImg struct {
 	HttpProxy string
 	NixCacheDisable bool
+	NixBaseImage string `default:"registry.cn-hangzhou.aliyuncs.com/117503445-mirror/sync:linux.amd64.docker.io.nixos.nix.latest"`
 }
 
 func (c *cmdBuildImg) Run() error {
