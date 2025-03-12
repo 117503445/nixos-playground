@@ -38,6 +38,7 @@ jobs:
             sudo udevadm trigger --name-match=kvm
 
       - run: ./scripts/build-img-ci.sh
+      - run: sudo chmod a+rw ./data/img/*.img
 
       - run: xz -9v ./data/img/nixos-test.img
 
@@ -54,6 +55,7 @@ jobs:
         with:
           files: |
             ./data/img/nixos-test.img
+            ./data/img/nixos-test.img.xz
           tag_name: ${{ steps.tag.outputs.sha_short }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
