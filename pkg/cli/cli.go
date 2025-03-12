@@ -8,6 +8,7 @@ import (
 
 type cmdBuildImg struct {
 	HttpProxy string
+	NixCacheDisable bool
 }
 
 func (c *cmdBuildImg) Run() error {

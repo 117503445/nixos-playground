@@ -42,11 +42,15 @@ func buildImg(c *cmdBuildImg) {
 		}
 		return ""
 	}
-	hostIp := getHostIp()
-	if hostIp == "" {
-		log.Fatal().Msg("hostIp is empty")
+	var nixCacheUrl string
+	if !c.NixCacheDisable {
+		hostIp := getHostIp()
+		if hostIp == "" {
+			log.Fatal().Msg("hostIp is empty")
+		}
+		nixCacheUrl = fmt.Sprintf("http://%s:8000", hostIp)
+		log.Debug().Str("hostIp", hostIp).Str("nixCacheUrl", nixCacheUrl).Send()
 	}
-	log.Debug().Str("hostIp", hostIp).Send()
 
 	dirBuildImg := fmt.Sprintf("%s/build-img", common.DirLog)
 	if err := os.MkdirAll(dirBuildImg, 0755); err != nil {
@@ -86,7 +90,7 @@ func buildImg(c *cmdBuildImg) {
 			cmd := gexec.Commands([]string{
 				"docker", "run", "--rm", "--privileged",
 				"-e", "NAME=" + node,
-				"-e", "NIX_CACHE_URL=http://" + hostIp + ":8000",
+				"-e", "NIX_CACHE_URL=" + nixCacheUrl,
 				"-e", "HTTP_PROXY=" + c.HttpProxy,
 				"-v", "/workspace/assets/flake:/workspace",
 				"-v", "NIXSTORE:/nix/store",
