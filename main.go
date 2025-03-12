@@ -5,11 +5,14 @@ import (
 
 	"github.com/117503445/goutils"
 	"github.com/117503445/nixos-playground/pkg/cli"
+	"github.com/117503445/nixos-playground/pkg/common"
 	"github.com/rs/zerolog/log"
 )
 
 func init() {
-	goutils.InitZeroLog()
+	goutils.InitZeroLog(goutils.WithProduction{
+		DirLog: common.DirLog,
+	})
 }
 
 func main() {

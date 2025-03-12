@@ -4,7 +4,16 @@ tasks:
   default:
     desc: "The default task" 
     # deps: [deploy, compose-sync]
-    deps: [build-img]
+    # deps: []
+    cmds:
+      - clear
+      - task: build-img
+
+  format:
+    desc: "Format the code"
+    cmds:
+      - docker build -t 117503445/nix-formatter -f ./scripts/docker/formatter.Dockerfile .
+      - docker run --rm -it -v $(pwd):/workspace 117503445/nix-formatter  
 
   # deploy:
   #   desc: "Deploy the NixOS Cfg"
@@ -12,6 +21,7 @@ tasks:
   #   cmds:
   #     - go run . deploy
   build-img:
+    deps: [format]
     cmds:
       - clear
-      - go run . build-img
+      - go run . build-img {{.CLI_ARGS}}

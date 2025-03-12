@@ -7,6 +7,7 @@ import (
 )
 
 type cmdBuildImg struct {
+	HttpProxy string
 }
 
 func (c *cmdBuildImg) Run() error {
@@ -19,7 +20,7 @@ type cmdDeploy struct {
 
 var cli struct {
 	BuildImg cmdBuildImg `cmd:"" help:"build img"`
-	Deploy      cmdDeploy   `cmd:"" help: "deploy"`
+	Deploy   cmdDeploy   `cmd:"" help: "deploy"`
 }
 
 func CliLoad() {

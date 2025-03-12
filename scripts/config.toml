@@ -6,3 +6,4 @@ url = "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"
 
 [[upstreams]]
 url = "https://cache.nixos.org"
+# proxy = "http://192.168.1.1:1080"

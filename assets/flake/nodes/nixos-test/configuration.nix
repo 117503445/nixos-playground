@@ -9,22 +9,13 @@
     ../../lib/qemu-agent.nix
 
     ../../apps/sshd
-
     ../../apps/zsh
-    ../../apps/code-server
     ../../apps/docker
-    ../../apps/frpc
   ];
 
   # 网络主机名
   networking.hostName = "nixos-test";
 
-  # MBR 启动
-  # boot.loader.grub = {
-  #   enable = true;
-  #   default = "saved";
-  #   devices = ["/dev/vda"];
-  # };
   # UEFI 启动
   boot.loader.systemd-boot = {
     enable = true;
