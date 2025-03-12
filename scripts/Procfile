@@ -1,2 +1,2 @@
 dockerd: dockerd &> /workspace/data/logs/dockerd.log
-cache: nix-binary-cache --log-dir="/workspace/data/nix-binary-cache-logs" --cache-dir="/nix-binary-cache" serve &> /workspace/data/logs/nix-binary-cache.log
+cache: nix-binary-cache --log-dir="/workspace/data/nix-binary-cache-logs" --cache-dir="/nix-binary-cache" serve

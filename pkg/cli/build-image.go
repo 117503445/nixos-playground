@@ -37,6 +37,9 @@ func buildImg(c *cmdBuildImg) {
 
 	for _, node := range nodes {
 		log.Info().Str("node", node).Msg("BuildImg")
+
+		
+
 	}
 
 }
