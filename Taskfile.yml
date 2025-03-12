@@ -4,12 +4,14 @@ tasks:
   default:
     desc: "The default task" 
     # deps: [deploy, compose-sync]
-    deps: [generate-iso]
+    deps: [build-img]
+
   # deploy:
   #   desc: "Deploy the NixOS Cfg"
   #   deps: [ format, sb-merge, dae-merge, compose-lock, build-pm]
   #   cmds:
   #     - go run . deploy
-  generate-iso:
+  build-img:
     cmds:
-      - go run . generate-iso
+      - clear
+      - go run . build-img

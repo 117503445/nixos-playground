@@ -6,11 +6,11 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type cmdGenerateIso struct {
+type cmdBuildImg struct {
 }
 
-func (c *cmdGenerateIso) Run() error {
-	generateIso(c)
+func (c *cmdBuildImg) Run() error {
+	buildImg(c)
 	return nil
 }
 
@@ -18,8 +18,8 @@ type cmdDeploy struct {
 }
 
 var cli struct {
-	GenerateIso cmdGenerateIso `cmd:"" help:"generate iso"`
-	Deploy      cmdDeploy      `cmd:"" help: "deploy"`
+	BuildImg cmdBuildImg `cmd:"" help:"build img"`
+	Deploy      cmdDeploy   `cmd:"" help: "deploy"`
 }
 
 func CliLoad() {
