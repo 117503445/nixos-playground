@@ -1,0 +1,24 @@
+services:
+  dev:
+    build:
+      context: ./
+      dockerfile: ./scripts/docker/dev.Dockerfile
+    volumes:
+        - ./:/workspace
+        - docker:/var/lib/docker
+        - dev-ssh:/root/.ssh
+        - binary-cache:/nix-binary-cache
+        - lingma:/root/.lingma
+        - lingma-cache:/root/.cache/lingma
+    privileged: true
+    devices:
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+
+volumes:
+  docker:
+  dev-ssh:
+  binary-cache:
+  lingma:
+  lingma-cache:
