@@ -43,6 +43,8 @@ jobs:
       #     ## limits ssh access and adds the ssh public keys of the listed GitHub users
       #     limit-access-to-users: 117503445
 
+      - run: ls -alh ./data/img/
+
       - run: gzip --keep ./data/img/nixos-test.img
 
       - name: Generate release tag
