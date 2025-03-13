@@ -10,10 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: sudo su
-
-      - run: whoami
-
       - uses: actions/checkout@master
 
       # https://github.com/docker/setup-qemu-action
@@ -42,8 +38,10 @@ jobs:
             sudo udevadm trigger --name-match=kvm
 
       - run: ./scripts/build-img-ci.sh
-      - run: sudo chmod a+rw ./data/img/*.img
-      - run: sudo chmod a+rwx ./data/img/
+
+      - run: sudo chown -R $(whoami) ./data
+      - run: find ./data -type f -exec chmod 600 {} \;  # 设置文件权限为 600
+      - run: find ./data -type d -exec chmod 700 {} \;  # 设置目录权限为 700
 
       - run: xz -9v ./data/img/nixos-test.img
 
