@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: sudo su
+
+      - run: whoami
+
       - uses: actions/checkout@master
 
       # https://github.com/docker/setup-qemu-action
