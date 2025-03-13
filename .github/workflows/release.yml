@@ -35,15 +35,15 @@ jobs:
       - run: find ./data -type d -exec chmod 700 {} \;  # 设置目录权限为 700
 
       # for debug only
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
-        with:
-          ## limits ssh access and adds the ssh public key for the user which triggered the workflow
-          limit-access-to-actor: true
-          ## limits ssh access and adds the ssh public keys of the listed GitHub users
-          limit-access-to-users: 117503445
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
+      #   with:
+      #     ## limits ssh access and adds the ssh public key for the user which triggered the workflow
+      #     limit-access-to-actor: true
+      #     ## limits ssh access and adds the ssh public keys of the listed GitHub users
+      #     limit-access-to-users: 117503445
 
-      - run: gzip ./data/img/nixos-test.img
+      - run: gzip --keep ./data/img/nixos-test.img
 
       - name: Generate release tag
         if: "!startsWith(github.ref, 'refs/tags/')"
