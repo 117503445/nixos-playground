@@ -42,8 +42,8 @@
       disk.main = {
         # 要生成的磁盘镜像的大小，4GB 足够我使用，可以按需调整
         # Validation Failed: {"resource":"ReleaseAsset","code":"custom","field":"size","message":"size must be less than or equal to 2147483648"}
-        imageSize = "2147483648";
-        # 磁盘路径。Disko 生成磁盘镜像时，实际上是启动一个 Q  EMU 虚拟机走一遍安装流程。
+        imageSize = "2137483648";
+        # 磁盘路径。Disko 生成磁盘镜像时，实际上是启动一个 QEMU 虚拟机走一遍安装流程。
         # 因此无论你的 VPS 上的硬盘识别成 sda 还是 vda，这里都以 Disko 的虚拟机为准，指定 vda。
         device = "/dev/vda";
         type = "disk";
