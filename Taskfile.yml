@@ -23,5 +23,4 @@ tasks:
   build-img:
     deps: [format]
     cmds:
-      - clear
       - go run . build-img {{.CLI_ARGS}}
