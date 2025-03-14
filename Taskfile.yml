@@ -7,7 +7,7 @@ tasks:
     # deps: []
     cmds:
       - clear
-      - task: build-img
+      - task: run-vm
 
   format:
     desc: "Format the code"
@@ -24,3 +24,7 @@ tasks:
     deps: [format]
     cmds:
       - go run . build-img {{.CLI_ARGS}}
+  
+  run-vm:
+    cmds:
+      - go run . run-vm

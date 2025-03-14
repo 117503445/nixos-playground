@@ -15,6 +15,7 @@ services:
       - /dev/net/tun
     cap_add:
       - NET_ADMIN
+    init: true
 
 volumes:
   docker:
