@@ -1,11 +1,8 @@
 nixos-test-novnc: /usr/bin/novnc --vnc localhost:5900 --listen 6080 # http://localhost:6080/vnc.html
-nixos-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=8,threads=1 -m 4000M -drive file=/workspace/data/vm/nixos-test.img,format=raw -vnc 0.0.0.0:0 -nic bridge,br=br0,model=virtio-net-pci,mac=52:54:00:12:34:00 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd 
-# nixos-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=8,threads=1 -m 4000M -drive file=/workspace/data/vm/nixos-test.img,format=raw -vnc 0.0.0.0:0 -nic bridge,br=br0,model=virtio-net-pci,mac=52:54:00:12:34:00 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,file=nixos-test-uefi.fd
+nixos-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=8,threads=1 -m 2000M -drive file=/workspace/data/vm/nixos-test.img,format=raw -vnc 0.0.0.0:0 -nic bridge,br=br0,model=virtio-net-pci,mac=52:54:00:12:34:00 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd 
 
-# router-test-novnc: /usr/bin/novnc --vnc localhost:5901 --listen 6081
-# # router-test-mbr: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=12,threads=1 -m 4000M -drive file=main.raw,format=raw -vnc 0.0.0.0:1
-# router-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=12,threads=1 -m 4000M -drive file=router-test.img,format=raw -vnc 0.0.0.0:1 -nic bridge,br=br0,model=virtio-net-pci,mac=52:54:00:12:34:01 -nic bridge,br=br1,model=virtio-net-pci,mac=52:54:00:12:34:02 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,file=router-test-uefi.fd
+router-test-novnc: /usr/bin/novnc --vnc localhost:5901 --listen 6081
+router-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=8,threads=1 -m 2000M -drive file=/workspace/data/vm/router-test.img,format=raw -vnc 0.0.0.0:1 -nic bridge,br=br0,model=virtio-net-pci,mac=52:54:00:12:34:01 -nic bridge,br=br1,model=virtio-net-pci,mac=52:54:00:12:34:02 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd
 
-# guest-test-novnc: /usr/bin/novnc --vnc localhost:5902 --listen 6082
-# # guest-test-mbr: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=12,threads=1 -m 4000M -drive file=main.raw,format=raw -vnc 0.0.0.0:2
-# guest-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=12,threads=1 -m 2000M -drive file=guest-test.img,format=raw -vnc 0.0.0.0:2 -nic bridge,br=br1,model=virtio-net-pci,mac=52:54:00:12:34:03 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd -drive if=pflash,format=raw,file=guest-test-uefi.fd
+guest-test-novnc: /usr/bin/novnc --vnc localhost:5902 --listen 6082
+guest-test-uefi: qemu-system-x86_64 --enable-kvm -smp sockets=1,cores=8,threads=1 -m 2000M -drive file=/workspace/data/vm/guest-test.img,format=raw -vnc 0.0.0.0:2 -nic bridge,br=br1,model=virtio-net-pci,mac=52:54:00:12:34:02 -drive if=pflash,format=raw,readonly=on,file=/usr/share/edk2/x64/OVMF_CODE.4m.fd
