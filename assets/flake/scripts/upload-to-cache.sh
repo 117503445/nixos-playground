@@ -12,4 +12,5 @@ if echo "$NIX_CACHE_URL" | grep -q "ustc"; then
     exit 0
 fi
 
+# TODO: very slow, CPU bound, https://discourse.nixos.org/t/speed-up-nix-copy/15884
 nix copy --no-check-sigs --to $NIX_CACHE_URL $OUT_PATHS || true

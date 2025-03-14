@@ -14,15 +14,15 @@ import (
 func buildImg(c *cmdBuildImg) {
 	log.Info().Msg("cmdBuildImg")
 
-	getHostIp := func() string {
-		log.Debug().Msg("getHostIp")
+	getHostIp := func(ifaceName string) string {
+		// log.Debug().Msg("getHostIp")
 		interfaces, err := net.Interfaces()
 		if err != nil {
 			log.Fatal().Err(err).Send()
 		}
 
 		for _, iface := range interfaces {
-			if iface.Name == "eth0" {
+			if iface.Name == ifaceName {
 				addrs, err := iface.Addrs()
 				if err != nil {
 					log.Warn().Err(err).Msg("Error retrieving addresses for interface")
@@ -44,9 +44,12 @@ func buildImg(c *cmdBuildImg) {
 	}
 	var nixCacheUrl string
 	if !c.NixCacheDisable {
-		hostIp := getHostIp()
+		hostIp := getHostIp("eth0")
 		if hostIp == "" {
-			log.Fatal().Msg("hostIp is empty")
+			hostIp = getHostIp("br0")
+			if hostIp == "" {
+				log.Fatal().Msg("hostIp is empty")
+			}
 		}
 		nixCacheUrl = fmt.Sprintf("http://%s:8000", hostIp)
 		log.Debug().Str("hostIp", hostIp).Str("nixCacheUrl", nixCacheUrl).Send()

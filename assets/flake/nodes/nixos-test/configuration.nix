@@ -39,7 +39,7 @@
 
   # 通过 systemd-network 配置网络 IP 和 DNS
   systemd.network.networks.eth0 = {
-    address = ["172.19.0.3/16"];
+    address = ["172.19.0.10/16"];
     gateway = ["172.19.0.1"];
     matchConfig.Name = "eth0";
   };
