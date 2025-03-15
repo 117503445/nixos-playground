@@ -3,11 +3,10 @@
 # https://nix.dev/manual/nix/2.19/advanced-topics/post-build-hook
 set -eu
 
-echo "Uploading to cache, paths: $OUT_PATHS"
-echo "NIX_CACHE_URL: $NIX_CACHE_URL"
+echo "Uploading to cache, OUT_PATHS: $OUT_PATHS, NIX_CACHE_URL: $NIX_CACHE_URL"
 
-# if "ustc" in $NIX_CACHE_URL, skip
-if echo "$NIX_CACHE_URL" | grep -q "ustc"; then
+# 如果 $NIX_CACHE_URL 中包含 "ustc" 或 "cache.nixos.org"，则跳过上传
+if echo "$NIX_CACHE_URL" | grep -qE "ustc|cache\.nixos\.org"; then
     echo "Skip uploading to cache"
     exit 0
 fi

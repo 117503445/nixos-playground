@@ -16,12 +16,6 @@
   # 网络主机名
   networking.hostName = "router-test";
 
-  # MBR 启动
-  # boot.loader.grub = {
-  #   enable = true;
-  #   default = "saved";
-  #   devices = ["/dev/vda"];
-  # };
   # UEFI 启动
   boot.loader.systemd-boot = {
     enable = true;
@@ -191,12 +185,6 @@
             }
           ];
           subnet = "192.168.60.1/24";
-          reservations = [
-            {
-              hw-address = "52:54:98:76:54:82";
-              ip-address = "192.168.60.100";
-            }
-          ];
         }
       ];
       valid-lifetime = 4000;

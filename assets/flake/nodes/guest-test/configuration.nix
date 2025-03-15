@@ -31,8 +31,9 @@
   };
 
   networking = {
+    useNetworkd = true;
     # 关闭 DHCP，手动配置 IP
-    # useDHCP = false;
+    useDHCP = false;
     # 手动设置 DNS
     nameservers = ["223.5.5.5"];
     # 手动设置默认网关
@@ -48,8 +49,8 @@
 
   # 通过 systemd-network 配置网络 IP 和 DNS
   systemd.network.networks.eth0 = {
-    # address = ["172.19.0.3/16"];
-    # gateway = ["172.19.0.1"];
+    # address = ["192.168.60.2/24"];
+    # gateway = ["192.168.60.1"];
     networkConfig.DHCP = "yes";
     matchConfig.Name = "eth0";
   };
