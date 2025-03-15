@@ -40,12 +40,6 @@
     nftables.enable = true;
     nftables.ruleset = ''
       table inet filter {
-        # enable flow offloading for better throughput
-        # flowtable f {
-        #   hook ingress priority 0;
-        #   devices = { wan, lan };
-        # }
-
         chain output {
           type filter hook output priority 100; policy accept;
         }
@@ -53,57 +47,30 @@
         chain input {
           type filter hook input priority filter; policy drop;
 
-          # Allow established and related connections
-          # ct state established,related counter accept
-
-          # Allow trusted networks to access the router
           iifname {
-            "lan",
-          } counter accept
+            "lan", "lo"
+          } counter accept comment "Allow trusted networks"
 
           # Allow returning traffic from wan
           iifname "wan" ct state { established, related } counter accept
 
-          # Allow SSH
-          iifname "wan" tcp dport 22 ct state new,established counter accept comment "Allow SSH"
-
-          # Allow mosdns
-          # iifname "wan" udp dport 15353 ct state new,established counter accept comment "Allow mosdns"
-
-          # Allow metacubexd
-          iifname "wan" tcp dport 9090 ct state new,established counter accept comment "Allow metacubexd"
-
-          # Allow daed
-          iifname "wan" tcp dport 2023 ct state new,established counter accept comment "Allow daed"
-
-          # Allow traffic from lo interface
-          iifname "lo" counter accept comment "Allow traffic from lo interface"
-
-          iifname "wan" drop
+          iifname "wan" counter drop
         }
 
         chain forward {
           type filter hook forward priority filter; policy drop;
 
-          # counter log prefix "traffic-20250106-0105"
-
-          ip daddr 192.168.60.100 tcp dport 22 counter accept
-
-          # enable flow offloading for better throughput
-          # ip protocol { tcp, udp } flow offload @f
-
-          # Allow trusted network WAN access
           iifname {
-                  "lan",
+                  "lan"
           } oifname {
-                  "wan",
-          } counter accept comment "Allow trusted LAN to WAN"
+                  "wan"
+          } counter accept comment "Allow trusted LAN to wan, tailscale0"
 
-          # Allow established WAN to return
+          # Allow established wan to return
           iifname {
-                  "wan",
+                  "wan"
           } oifname {
-                  "lan",
+                  "lan"
           } ct state established,related counter accept comment "Allow established back to LANs"
         }
       }
@@ -111,14 +78,19 @@
       table ip nat {
         chain prerouting {
           type nat hook prerouting priority -100; policy accept;
-
-          tcp dport 2222 counter dnat to 192.168.60.100:22
+          # tcp dport 22 counter dnat to 192.168.60.2:22
         }
 
-        # Setup NAT masquerading on the wan interface
+        # chain output {
+        #   type nat hook output priority -100 ; policy accept;
+        #   # for router and lan
+        #   tcp dport 22 counter dnat to 192.168.60.2:22
+        # }
+
         chain postrouting {
           type nat hook postrouting priority 100; policy accept;
-          oifname "wan" counter masquerade
+
+          ip saddr 192.168.60.0/24 oifname "wan" counter masquerade
         }
       }
     '';
