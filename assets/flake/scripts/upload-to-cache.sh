@@ -11,5 +11,11 @@ if echo "$NIX_CACHE_URL" | grep -qE "ustc|cache\.nixos\.org"; then
     exit 0
 fi
 
-# TODO: very slow, CPU bound, https://discourse.nixos.org/t/speed-up-nix-copy/15884
-nix copy --no-check-sigs --to $NIX_CACHE_URL $OUT_PATHS || true
+# copy disko-images 时只能用单核压缩，特别慢，而且很容易过期，所以不 copy disko-images
+if echo "$OUT_PATHS" | grep -q "disko-images"; then
+    echo "$OUT_PATHS contains disko-images, skip"
+    exit 0
+else
+    # TODO: very slow, CPU bound, https://discourse.nixos.org/t/speed-up-nix-copy/15884
+    nix copy --no-check-sigs --to $NIX_CACHE_URL $OUT_PATHS || true
+fi

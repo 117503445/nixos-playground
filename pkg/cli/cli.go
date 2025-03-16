@@ -20,6 +20,11 @@ func (c *cmdBuildImg) Run() error {
 type cmdDeploy struct {
 }
 
+func (c *cmdDeploy) Run() error {
+	runDeploy(c)
+	return nil
+}
+
 type cmdRunVm struct {
 }
 

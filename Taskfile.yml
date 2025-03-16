@@ -28,3 +28,7 @@ tasks:
   run-vm:
     cmds:
       - go run . run-vm
+  
+  deploy:
+    cmds:
+      - go run . deploy
