@@ -13,6 +13,8 @@ services:
     ports:
       - 8006:8006
     volumes:
+      # - ./quest-test.img:/boot.img # aria2c -x 16 https://github.com/117503445/nixos-playground/releases/latest/download/guest-test.img
+      - ../../data/vm/guest-test.img:/boot.img
       - qemu:/storage
     stop_grace_period: 2m
 volumes:
