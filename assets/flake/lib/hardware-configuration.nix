@@ -21,7 +21,7 @@
   # Root 用户的密码和 SSH 密钥。如果网络配置有误，可以用此处的密码在控制台上登录进去手动调整网络配置。
   users.users.root = {
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDYV5Hoaed4dQSmRoZrX+x6p+r16uBHVgv1Zkl8DOMRD 117503445-gen3" # content of authorized_keys file
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHJrGXuU1OG8e1rO9EFcrB9CeQF9KilDy/Z/G4xCQMPM root@eb593c5e3820" # content of authorized_keys file
     ];
     initialPassword = "1";
   };

@@ -39,8 +39,8 @@
 
   # 通过 systemd-network 配置网络 IP 和 DNS
   systemd.network.networks.eth0 = {
-    address = ["172.19.0.10/16"];
-    gateway = ["172.19.0.1"];
+    address = [(builtins.fromTOML (builtins.readFile ./net.toml)).address];
+    gateway = [(builtins.fromTOML (builtins.readFile ./net.toml)).gateway];
     matchConfig.Name = "eth0";
   };
 

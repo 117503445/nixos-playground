@@ -30,5 +30,10 @@ tasks:
       - go run . run-vm
   
   deploy:
+    # deps: [format]
     cmds:
       - go run . deploy
+  
+  set-test-net:
+    cmds:
+      - go run . set-test-net

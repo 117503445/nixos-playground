@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"io"
-	"net"
 	"os"
 
 	"github.com/117503445/goutils/gexec"
@@ -14,43 +13,9 @@ import (
 func buildImg(c *cmdBuildImg) {
 	log.Info().Msg("cmdBuildImg")
 
-	getHostIp := func(ifaceName string) string {
-		// log.Debug().Msg("getHostIp")
-		interfaces, err := net.Interfaces()
-		if err != nil {
-			log.Fatal().Err(err).Send()
-		}
-
-		for _, iface := range interfaces {
-			if iface.Name == ifaceName {
-				addrs, err := iface.Addrs()
-				if err != nil {
-					log.Warn().Err(err).Msg("Error retrieving addresses for interface")
-					continue
-				}
-				for _, addr := range addrs {
-					var ip net.IP
-					switch v := addr.(type) {
-					case *net.IPNet:
-						ip = v.IP
-					case *net.IPAddr:
-						ip = v.IP
-					}
-					return ip.String()
-				}
-			}
-		}
-		return ""
-	}
 	var nixCacheUrl string
 	if !c.NixCacheDisable {
-		hostIp := getHostIp("eth0")
-		if hostIp == "" {
-			hostIp = getHostIp("br0")
-			if hostIp == "" {
-				log.Fatal().Msg("hostIp is empty")
-			}
-		}
+		hostIp := common.GetHostIp()
 		nixCacheUrl = fmt.Sprintf("http://%s:8000", hostIp)
 		log.Debug().Str("hostIp", hostIp).Str("nixCacheUrl", nixCacheUrl).Send()
 	} else {

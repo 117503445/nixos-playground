@@ -30,4 +30,6 @@ func runDeploy(c *cmdDeploy) {
 	testIp := findTestIp()
 	log.Info().Str("testIp", testIp).Send()
 
+	
+
 }

@@ -33,10 +33,19 @@ func (c *cmdRunVm) Run() error {
 	return nil
 }
 
+type cmdTestNet struct {
+}
+
+func (c *cmdTestNet) Run() error {
+	setTestNet(c)
+	return nil
+}
+
 var cli struct {
 	BuildImg cmdBuildImg `cmd:"" help:"build img"`
-	Deploy   cmdDeploy   `cmd:"" help: "deploy"`
+	Deploy   cmdDeploy   `cmd:"" help:"deploy"`
 	RunVm    cmdRunVm    `cmd:"" help:"run vm"`
+	SetTestNet cmdTestNet `cmd:"" help:"set nixos-test net info"`
 }
 
 func CliLoad() {
