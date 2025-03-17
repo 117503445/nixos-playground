@@ -1,0 +1,19 @@
+services:
+  qemu:
+    image: qemux/qemu
+    restart: unless-stopped
+    environment:
+      BOOT: "https://github.com/117503445/nixos-playground/releases/latest/download/guest-test.img"
+      DEBUG: "Y"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+    volumes:
+      - qemu:/storage
+    stop_grace_period: 2m
+volumes:
+  qemu:
