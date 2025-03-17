@@ -3,14 +3,16 @@ package cli
 import (
 	"fmt"
 	"net"
+	"strings"
 
 	"github.com/117503445/goutils"
+	"github.com/117503445/nixos-playground/pkg/common"
 	"github.com/rs/zerolog/log"
 )
 
 func setTestNet(c *cmdTestNet) {
 	// exp: 172.19.0.3/16
-	// network: 172.19
+	// network: 172.19.0.0
 	// mask: 16
 	getNetworkMask := func() (string, string) {
 		interfaces, err := net.Interfaces()
@@ -37,18 +39,7 @@ func setTestNet(c *cmdTestNet) {
 							ones, _ := ipnet.Mask.Size() // 获取掩码大小
 							network := ipnet.IP.Mask(ipnet.Mask)
 
-							networkStr := ""
-							switch ones {
-							case 8:
-								networkStr = fmt.Sprintf("%d", network[0])
-							case 16:
-								networkStr = fmt.Sprintf("%d.%d", network[0], network[1])
-							case 24:
-								networkStr = fmt.Sprintf("%d.%d.%d", network[0], network[1], network[2])
-							default:
-								log.Fatal().Int("mask", ones).Msg("Unsupported mask size")
-							}
-							return networkStr, fmt.Sprintf("%d", ones)
+							return network.String(), fmt.Sprintf("%d", ones)
 						}
 					}
 				}
@@ -58,11 +49,17 @@ func setTestNet(c *cmdTestNet) {
 		return "", ""
 	}
 
-	ip, mask := getNetworkMask()
-	log.Debug().Str("ip", ip).Str("mask", mask).Send()
+	network, mask := getNetworkMask()
+	log.Debug().Str("ip", network).Str("mask", mask).Send()
 
-	err := goutils.WriteToml("/workspace/assets/flake/nodes/nixos-test/net.toml", map[string]string{
-		"gateway": fmt.Sprintf("%s")
+	gateway := strings.TrimSuffix(network, ".0") + ".1"
+	address := fmt.Sprintf("%s.10/%s", strings.TrimSuffix(network, ".0"), mask)
+
+	log.Debug().Str("gateway", gateway).Str("address", address).Send()
+
+	err := goutils.WriteToml(common.FileTestNet, map[string]string{
+		"gateway": gateway,
+		"address": address,
 	})
 	if err != nil {
 		log.Fatal().Err(err).Send()

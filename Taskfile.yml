@@ -2,12 +2,10 @@ version: '3'
 
 tasks:
   default:
-    desc: "The default task" 
-    # deps: [deploy, compose-sync]
-    # deps: []
+    desc: "The default task"
     cmds:
       - clear
-      - task: run-vm
+      - task: deploy
 
   format:
     desc: "Format the code"
@@ -15,13 +13,10 @@ tasks:
       - docker build -t 117503445/nix-formatter -f ./scripts/docker/formatter.Dockerfile .
       - docker run --rm -it -v $(pwd):/workspace 117503445/nix-formatter  
 
-  # deploy:
-  #   desc: "Deploy the NixOS Cfg"
-  #   deps: [ format, sb-merge, dae-merge, compose-lock, build-pm]
-  #   cmds:
-  #     - go run . deploy
   build-img:
-    deps: [format]
+    deps: 
+      - format
+      - set-test-net
     cmds:
       - go run . build-img {{.CLI_ARGS}}
   
@@ -30,7 +25,9 @@ tasks:
       - go run . run-vm
   
   deploy:
-    # deps: [format]
+    deps: 
+      # - format
+      - set-test-net
     cmds:
       - go run . deploy
   

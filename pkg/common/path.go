@@ -10,6 +10,8 @@ const DirData = "/workspace/data"
 const DirImg = "/workspace/data/img"
 const DirVm = "/workspace/data/vm"
 
+const FileTestNet = "/workspace/assets/flake/nodes/nixos-test/net.toml"
+
 var DirLog = "/workspace/data/logs/" + RunId
 
 func init() {
