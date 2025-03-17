@@ -1,0 +1,8 @@
+services:
+  coredhcp:
+    image: 117503445/coredhcp
+    ports:
+      - 67:67/udp
+      - 547:547/udp
+    volumes:
+      - ./config.yml:/workspace/config.yml
