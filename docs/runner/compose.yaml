@@ -1,0 +1,14 @@
+services:
+  runner:
+    image: 117503445/nixos-playground
+    # restart: unless-stopped
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    privileged: true
+    ports:
+      - 6080:6080
+    volumes:
+      - data:/workspace/data
+volumes:
+  data:
