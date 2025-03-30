@@ -11,6 +11,8 @@ import (
 )
 
 func setTestNet(c *cmdTestNet) {
+	common.MustSetTestNet()
+
 	// exp: 172.19.0.3/16
 	// network: 172.19.0.0
 	// mask: 16
