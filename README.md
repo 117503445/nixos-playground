@@ -231,9 +231,39 @@ nix build --accept-flake-config --no-require-sigs --print-build-logs --show-trac
 
 pkg/cli/build-image.go 包含了构建所有节点磁盘镜像的调用代码
 
+参考 [制作小内存 VPS 的 DD 磁盘镜像](https://lantian.pub/article/modify-computer/nixos-low-ram-vps.lantian/)
+
 ### 磁盘镜像安装
 
-可以 SSH + dd，也可以在 Windows 上使用 Refus 刷写到 U 盘。
+通过上一步，生成了 guest-test.img。然后可以通过很方便的方式进行安装。
+
+#### SSH + DD
+
+首先在服务器 `123.45.67.89` 上，启用 SSH 服务
+
+然后运行
+
+```sh
+cat guest-test.img | ssh root@123.45.67.89 "dd of=/dev/sda"
+```
+
+重启后，就完成系统安装了。
+
+#### U 盘刷写
+
+在 Windows 上可以使用 Refus 刷写到 U 盘。比如在路由器上，对储存的要求不高，因此可以直接在 u盘上跑操作系统。
+
+#### 扩容
+
+创建的磁盘镜像大小只有 2GB，dd 完成后的镜像不会占满 VPS 的硬盘空间，需要手动扩展分区。
+
+先用 cfdisk，把剩余空间合并到 nix 分区
+
+然后文件系统扩容
+
+```sh
+btrfs filesystem resize max /nix
+```
 
 ### 增量部署
 
