@@ -136,11 +136,102 @@ docker compose exec dev go-task deploy
 
 Nix 可以理解为图灵完备的 YAML，具有更强的表达能力，可以描述整个操作系统的运行环境。
 
-在本 repo 中，入口点是 flake.nix。
+在本 repo 中，入口点是 flake.nix。一个 flake 可以包含多个节点的配置定义。在 flake.nix 的 nodes 定义了各个节点的名称。比如 guest-test 节点，具体配置见 assets/flake/nodes/guest-test。
+
+assets/flake/nodes/guest-test/configuration.nix 包含了系统配置
+
+导入一些各个节点都有的配置，以及需要安装的软件
+
+```nix
+imports = [
+  ../../lib/hardware-configuration.nix
+  ../../lib/qemu-agent.nix
+
+  ../../apps/sshd
+  ../../apps/zsh
+  ../../apps/docker
+];
+```
+
+定义网络主机名和启动方式
+```nix
+  # 网络主机名
+  networking.hostName = "guest-test";
+
+  # UEFI 启动
+  boot.loader.systemd-boot = {
+    enable = true;
+  };
+```
+
+定义网络配置
+
+```nix
+  networking = {
+    useNetworkd = true;
+    # 关闭 DHCP，手动配置 IP
+    useDHCP = false;
+    # 手动设置 DNS
+    nameservers = ["223.5.5.5"];
+    # 关闭 NixOS 自带的防火墙
+    firewall.enable = false;
+    # 禁用默认的网络接口命名规则，以允许自定义命名
+    usePredictableInterfaceNames = false;
+  };
+
+  # 通过 systemd-network 配置网络 IP 和 DNS
+  systemd.network.networks.eth0 = {
+    networkConfig.DHCP = "yes";
+    matchConfig.Name = "eth0";
+  };
+```
+
+在 assets/flake/nodes/router-test/home.nix 定义了 home-manager 的配置
+
+```nix
+{
+  config,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ../../lib/home.nix
+  ];
+}
+```
+
+NixOS 常有 2 种软件安装方式。一种是 environment.systemPackages，如 assets/flake/apps/zellij/default.nix
+
+```nix
+environment.systemPackages = with pkgs; [zellij];
+```
+
+另一种是借助 home-manager 的 home.packages，参考 assets/flake/lib/home.nix。大部分软件我都是通过这种方式安装的。另外，home-manager 还配置了 shell 和 git。
 
 ### 磁盘镜像生成
 
-### 安装
+在 assets/flake/lib/hardware-configuration.nix 中的 disko 定义了如何生成磁盘镜像。我个人喜欢分为 2 个区。前 128M 是 ESP(boot) 分区，剩下部分都是 nix 分区，用于储存实际数据。
+
+- ESP 分区 使用 vfat 分区，Label 为 NixBoot，将挂载到 /boot
+- nix 分区 使用 btrfs 分区，Label 为 NixOS，将挂载到 /nix
+
+文件系统中
+
+- `/` 使用 tmpfs，保证重启后可以自动丢弃多余文件
+- `/boot` 挂载 NixBoot 分区
+- `/nix` 挂载 NixOS 分区
+
+此外，`/nix/persistent` 储存了 `/home` `/root` 等需要持久化的数据。启动后会将这些数据挂载到指定路径。
+
+最后通过 nix build 生成 guest-test 的磁盘镜像
+
+```sh
+nix build --accept-flake-config --no-require-sigs --print-build-logs --show-trace .#build-guest-test
+```
+
+pkg/cli/build-image.go 包含了构建所有节点磁盘镜像的调用代码
+
+### 磁盘镜像安装
 
 可以 SSH + dd，也可以在 Windows 上使用 Refus 刷写到 U 盘。
 
