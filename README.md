@@ -10,7 +10,7 @@
 
 ### NixOS Playground 是干什么的
 
-NixOS Playground 是一个 NixOS 的游乐场，它提供了一套完整的 NixOS 起步配置。可以进行各种操作，比如生成系统镜像、运行虚拟机、更新已有的 NixOS 系统等。特别的是，NixOS Playground 本身不依赖于 Nix，只要在任意一个装有 Docker 的 Linux 发行版上都可以运行。甚至，在 CI 环境中也可以通过 Docker 生成 Nixos 配置所生成的镜像。
+NixOS Playground 是一个 NixOS 的游乐场，它提供了一套完整的 NixOS 起步配置。可以进行各种操作，比如生成系统镜像、运行虚拟机、更新已有的 NixOS 系统等。特别的是，NixOS Playground 本身不依赖于 Nix，只要在任意一个装有 Docker 的 Linux 发行版上都可以运行。甚至，在 CI 环境中也可以通过 Docker 生成 Nixos 配置所对应的镜像。
 
 ### 有哪些特别的配置技巧
 
@@ -23,7 +23,7 @@ NixOS Playground 的配置遵循了一系列最佳实践
 - [alejandra](https://github.com/kamadorueda/alejandra) 格式化配置。当 Nix 配置出现语法错误时，Nix 的报错信息非常冗长。因此，在实际部署前先格式化，不仅保证了格式的一致性，还能快速定位语法错误。
 - [nix-binary-cache](https://github.com/117503445/nix-binary-cache) 默认情况下，生成系统镜像时只会从上游源拉取 Nix 二进制包。我写了个缓存服务，能够指定是否通过 HTTP 代理从多个上游拉取二进制包，并提供给镜像构建时使用。
 
-包含了几种场景下的 NixOS 配置。在我原有的 HomeLab 中，使用 OpenWRT 作为软路由操作系统，使用 PVE 作为服务器宿主操作系统，使用 ArchLinux 作为开发环境/生产环境所用。现在，一切都可以被 NixOS 替代，一切都可以被统一管理。每一条路由项、防火墙规则、QEMU 服务启动参数，都明明白白写在 NixOS 的配置文件中，而不是藏在 OpenWRT 和 PVE 的层层复杂抽象之下。
+NixOS Playground 包含了几种场景下的 NixOS 配置。在我原有的 HomeLab 中，使用 OpenWRT 作为软路由操作系统，使用 PVE 作为服务器宿主操作系统，使用 ArchLinux 作为开发环境/生产环境。现在，一切都可以被 NixOS 替代，一切都可以被统一管理。每一条路由项、防火墙规则、QEMU 服务启动参数，都明明白白写在 NixOS 的配置文件中，而不是藏在 OpenWRT 和 PVE 的层层复杂抽象封装之下。
 
 - 基础款，配置了 Zsh 和 Docker，适合用于开发环境，或者以此为基础进行构建
 - NAT，直接用 NixOS 取代 OpenWRT
@@ -121,4 +121,32 @@ docker compose exec dev go-task run-vm
 ```sh
 docker compose exec dev go-task deploy
 ```
+
+## 实现
+
+在本节中，将详细介绍 Nix 配置和 Go 脚本的实现，帮助你进行个性化定制。
+
+### 哲学
+
+在我眼中，Docker Compose 是一个非常有力的运维工具。它使用声明式思想，使用结构化的 YAML 纯文本来描述容器的运行环境。维护者可以通过阅读 compose.yaml 快速了解容器的现有运行环境，也可以进行编辑实现新的运维变更。在使用 hash-tag 防止镜像意外改变后，Docker Compose 也具有较强的可复现性，不同时间部署不会影响部署结果，在不同机器上部署也不会影响部署结果。
+
+但是 Docker 容器具有局限性，不能跑 systemd，不能用来运行完整的操作系统。因此，通过 NixOS，可以像维护 Docker Compose 一样维护操作系统。
+
+### Nix
+
+Nix 可以理解为图灵完备的 YAML，具有更强的表达能力，可以描述整个操作系统的运行环境。
+
+在本 repo 中，入口点是 flake.nix。
+
+### 磁盘镜像生成
+
+### 安装
+
+可以 SSH + dd，也可以在 Windows 上使用 Refus 刷写到 U 盘。
+
+### 增量部署
+
+### NixOS 替代 OpenWRT
+
+### NixOS 替代 PVE
 
