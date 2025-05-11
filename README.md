@@ -267,7 +267,19 @@ btrfs filesystem resize max /nix
 
 ### 增量部署
 
+如果每次变更（增加、删除、修改）系统软件，都需要通过系统镜像进行刷写，是非常麻烦的。增量部署是更加方便、效率更加高的方式。参考 pkg/cli/deploy.go ，用户在 git repo 中完成 flake 的修改后，先通过 rsync 将 flake 同步至目标节点的 `/etc/nixos` 下，然后调用 `nixos-rebuild switch` 命令，更新配置。
+
 ### NixOS 替代 OpenWRT
+
+在路由器上，我有组建虚拟局域网、分流等需求。以前我是用 OpenWRT，但是各种软件的版本较低，依赖环境奇怪，网络配置错综复杂，折腾起来非常麻烦。后来使用 NixOS 以后，具有以下优点
+
+- 轻松支持最新版本软件，如 Tailscale，也可以使用满血 ebpf 进行高性能分流
+- 轻松使用主流生态技术，比如 Systemd 和 nftable 等
+- 统一使用 flake 管理，大幅提升可维护性
+
+router-test 定义了一个简单的路由器系统。具有 2 个网口，在 LAN 口上启用 DHCP，并且通过 nftable 规则实现了 NAT。
+
+在 NixOS-playground 中，router-test 有 2 张网卡，一张用于上网，还有一张用于和 guest-test 桥接。guest-test 作为局域网内的普通设备，借助 router-test 上网。
 
 ### NixOS 替代 PVE
 
