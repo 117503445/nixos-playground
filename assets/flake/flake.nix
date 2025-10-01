@@ -50,6 +50,7 @@
       "nixos-test"
       "router-test"
       "guest-test"
+      "incus-test"
     ];
   in {
     packages.x86_64-linux = builtins.listToAttrs (map (name: {
