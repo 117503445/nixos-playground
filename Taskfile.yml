@@ -40,3 +40,8 @@ tasks:
       - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build .
       - docker build -t 117503445/nixos-playground -f ./scripts/docker/runner.Dockerfile .
       - cd /workspace/docs/runner && docker compose up
+
+  flake-update:
+    cmds:
+      - nix flake update --extra-experimental-features nix-command --extra-experimental-features flakes
+    dir: assets/flake

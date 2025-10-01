@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # https://nix.dev/manual/nix/2.19/advanced-topics/post-build-hook
-set -eu
+set -e
 
 echo "Uploading to cache, OUT_PATHS: $OUT_PATHS, NIX_CACHE_URL: $NIX_CACHE_URL"
 
