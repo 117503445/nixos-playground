@@ -62,7 +62,7 @@ func runDeploy(c *cmdDeploy) {
 	switchOs := func() {
 
 		cache := "https://mirrors.ustc.edu.cn/nix-channels/store"
-		hostName := "nixos-test"
+		hostName := c.Host
 
 		_, err := gexec.Run(
 			gexec.Commands(

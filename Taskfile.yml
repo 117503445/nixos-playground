@@ -29,7 +29,7 @@ tasks:
       # - format
       - set-test-net
     cmds:
-      - go run . deploy
+      - go run . deploy {{.CLI_ARGS}}
   
   set-test-net:
     cmds:

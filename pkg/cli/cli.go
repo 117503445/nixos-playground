@@ -10,6 +10,8 @@ type cmdBuildImg struct {
 	HttpProxy       string
 	NixCacheDisable bool
 	NixBaseImage    string `default:"registry.cn-hangzhou.aliyuncs.com/117503445-mirror/sync:linux.amd64.docker.io.nixos.nix.latest"`
+
+	Host string
 }
 
 func (c *cmdBuildImg) Run() error {
@@ -18,6 +20,7 @@ func (c *cmdBuildImg) Run() error {
 }
 
 type cmdDeploy struct {
+	Host string `default:"nixos-test"`
 }
 
 func (c *cmdDeploy) Run() error {

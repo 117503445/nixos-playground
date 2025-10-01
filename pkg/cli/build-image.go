@@ -27,24 +27,6 @@ func buildImg(c *cmdBuildImg) {
 		log.Fatal().Err(err).Str("dirBuildImg", dirBuildImg).Send()
 	}
 
-	getSubDirs := func(dir string) []string {
-		dirs := []string{}
-
-		files, err := os.ReadDir(dir)
-		if err != nil {
-			log.Fatal().Err(err).Send()
-		}
-		for _, file := range files {
-			if file.IsDir() {
-				dirs = append(dirs, file.Name())
-			}
-		}
-		return dirs
-	}
-
-	nodes := getSubDirs("/workspace/assets/flake/nodes")
-	log.Debug().Strs("nodes", nodes).Send()
-
 	_, err := gexec.Run(
 		// gexec.Command("docker build --quiet -t 117503445/nix-builder -f ./scripts/docker/nix.Dockerfile ."),
 		gexec.Commands([]string{
@@ -59,46 +41,68 @@ func buildImg(c *cmdBuildImg) {
 		log.Fatal().Err(err).Send()
 	}
 
-	for _, node := range nodes {
-		buildImg := func() {
-			log.Info().Str("node", node).Msg("BuildImg")
+	buildImg := func(node string) {
+		log.Info().Str("node", node).Msg("BuildImg")
 
-			fileLog := fmt.Sprintf("%s/%s.log", dirBuildImg, node)
-			cmd := gexec.Commands([]string{
-				"docker", "run", "--rm", "--privileged",
-				"-e", "NAME=" + node,
-				"-e", "NIX_CACHE_URL=" + nixCacheUrl,
-				"-e", "HTTP_PROXY=" + c.HttpProxy,
-				"-v", "/workspace/assets/flake:/workspace",
-				"-v", "NIXSTORE:/nix/store",
-				"-v", "/workspace/data/img:/data",
-				"-v", "/workspace/scripts/mk-img.sh:/entrypoint",
-				"117503445/nix-builder",
-			})
-			log.Info().Str("cmd", cmd.String()).Str("fileLog", fileLog).Msg("Executing")
-			f, err := os.OpenFile(fileLog, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-			if err != nil {
-				log.Fatal().Err(err).Send()
-			}
-
-			_, err = gexec.Run(
-				cmd,
-				&gexec.RunCfg{
-					DisableLog: true,
-					Writers: []io.Writer{
-						os.Stdout,
-						f,
-					},
-				},
-			)
-			if err != nil {
-				log.Fatal().Err(err).Send()
-			}
-
-			log.Info().Str("cmd", cmd.String()).Str("fileLog", fileLog).Msg("Executed")
+		fileLog := fmt.Sprintf("%s/%s.log", dirBuildImg, node)
+		cmd := gexec.Commands([]string{
+			"docker", "run", "--rm", "--privileged",
+			"-e", "NAME=" + node,
+			"-e", "NIX_CACHE_URL=" + nixCacheUrl,
+			"-e", "HTTP_PROXY=" + c.HttpProxy,
+			"-v", "/workspace/assets/flake:/workspace",
+			"-v", "NIXSTORE:/nix/store",
+			"-v", "/workspace/data/img:/data",
+			"-v", "/workspace/scripts/mk-img.sh:/entrypoint",
+			"117503445/nix-builder",
+		})
+		log.Info().Str("cmd", cmd.String()).Str("fileLog", fileLog).Msg("Executing")
+		f, err := os.OpenFile(fileLog, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Fatal().Err(err).Send()
 		}
 
-		buildImg()
+		_, err = gexec.Run(
+			cmd,
+			&gexec.RunCfg{
+				DisableLog: true,
+				Writers: []io.Writer{
+					os.Stdout,
+					f,
+				},
+			},
+		)
+		if err != nil {
+			log.Fatal().Err(err).Send()
+		}
+
+		log.Info().Str("cmd", cmd.String()).Str("fileLog", fileLog).Msg("Executed")
 	}
 
+	var nodes []string
+	if c.Host != "" {
+		nodes = []string{c.Host}
+	} else {
+		getSubDirs := func(dir string) []string {
+			dirs := []string{}
+
+			files, err := os.ReadDir(dir)
+			if err != nil {
+				log.Fatal().Err(err).Send()
+			}
+			for _, file := range files {
+				if file.IsDir() {
+					dirs = append(dirs, file.Name())
+				}
+			}
+			return dirs
+		}
+
+		nodes = getSubDirs("/workspace/assets/flake/nodes")
+	}
+	log.Debug().Strs("nodes", nodes).Send()
+
+	for _, node := range nodes {
+		buildImg(node)
+	}
 }
