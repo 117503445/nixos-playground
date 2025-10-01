@@ -8,14 +8,13 @@ import (
 
 	"github.com/117503445/goutils"
 	"github.com/117503445/goutils/gexec"
-	"github.com/117503445/nixos-playground/pkg/common"
 	"github.com/rs/zerolog/log"
 )
 
 func runDeploy(c *cmdDeploy) {
 	findTestIp := func() string {
 		var m map[string]string
-		err := goutils.ReadToml(common.FileTestNet, &m)
+		err := goutils.ReadToml(fmt.Sprintf("/workspace/assets/flake/nodes/%v/net.toml", c.Host), &m)
 		if err != nil {
 			log.Fatal().Err(err).Send()
 			return ""
