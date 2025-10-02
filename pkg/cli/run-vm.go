@@ -17,20 +17,29 @@ import (
 func runVm(c *cmdRunVm) {
 	var imgs []string
 
-	// TODO 增加 hosts 变量
 	// 如果 c.Host 为空，则 hosts 是 /workspace/data/img/%v.img 的 %v 列表
 	// 否则 hosts 是 [c.Host]
-
-	// TODO 根据 hosts 生成 imgs
-
+	var hosts []string
 	if c.Host != "" {
-		imgs = []string{fmt.Sprintf("/workspace/data/img/%v.img", c.Host)}
+		hosts = []string{c.Host}
 	} else {
-		var err error
-		imgs, err = filepath.Glob("/workspace/data/img/*.img")
+		// 获取所有 img 文件，提取主机名
+		imgFiles, err := filepath.Glob("/workspace/data/img/*.img")
 		if err != nil {
 			log.Fatal().Err(err).Send()
 		}
+
+		for _, imgFile := range imgFiles {
+			base := filepath.Base(imgFile)
+			host := strings.TrimSuffix(base, filepath.Ext(base))
+			hosts = append(hosts, host)
+		}
+	}
+	log.Info().Strs("hosts", hosts).Send()
+
+	// 根据 hosts 生成 imgs
+	for _, host := range hosts {
+		imgs = append(imgs, fmt.Sprintf("/workspace/data/img/%v.img", host))
 	}
 
 	log.Debug().Strs("imgs", imgs).Send()
@@ -67,8 +76,8 @@ func runVm(c *cmdRunVm) {
 
 	func() {
 		type procInfo struct {
-			name    string
-			cmdline string
+			Name    string
+			Cmdline string
 		}
 
 		// read Procfile and parse it.
@@ -87,8 +96,20 @@ func runVm(c *cmdRunVm) {
 				}
 				k, v := strings.TrimSpace(tokens[0]), strings.TrimSpace(tokens[1])
 				log.Debug().Str("k", k).Str("v", v).Send()
-				// TODO: k 必须以 hosts 中的某个元素，作为 start with
-				proc := &procInfo{name: k, cmdline: v}
+				// k 必须以 hosts 中的某个元素，作为 start with
+				shouldInclude := false
+				for _, host := range hosts {
+					if strings.HasPrefix(k, host) {
+						shouldInclude = true
+						break
+					}
+				}
+
+				if !shouldInclude {
+					continue
+				}
+
+				proc := &procInfo{Name: k, Cmdline: v}
 
 				procs = append(procs, proc)
 			}
@@ -98,6 +119,7 @@ func runVm(c *cmdRunVm) {
 			return procs
 		}
 		procs := readProcfile()
+		log.Info().Interface("procs", procs).Send()
 
 		var wg sync.WaitGroup
 
@@ -108,7 +130,7 @@ func runVm(c *cmdRunVm) {
 				defer wg.Done()
 
 				_, err := gexec.Run(
-					gexec.Command(proc.cmdline),
+					gexec.Command(proc.Cmdline),
 					&gexec.RunCfg{
 						Writers: []io.Writer{
 							os.Stdout,
