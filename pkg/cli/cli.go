@@ -29,6 +29,7 @@ func (c *cmdDeploy) Run() error {
 }
 
 type cmdRunVm struct {
+	Host string
 }
 
 func (c *cmdRunVm) Run() error {
@@ -54,11 +55,11 @@ func (c *cmdRunner) Run() error {
 }
 
 var cli struct {
-	BuildImg cmdBuildImg `cmd:"" help:"build img"`
-	Deploy   cmdDeploy   `cmd:"" help:"deploy"`
-	RunVm    cmdRunVm    `cmd:"" help:"run vm"`
-	SetTestNet cmdTestNet `cmd:"" help:"set nixos-test net info"`
-	Runner cmdRunner `cmd:"" help:"run img in docker"`
+	BuildImg   cmdBuildImg `cmd:"" help:"build img"`
+	Deploy     cmdDeploy   `cmd:"" help:"deploy"`
+	RunVm      cmdRunVm    `cmd:"" help:"run vm"`
+	SetTestNet cmdTestNet  `cmd:"" help:"set nixos-test net info"`
+	Runner     cmdRunner   `cmd:"" help:"run img in docker"`
 }
 
 func CliLoad() {

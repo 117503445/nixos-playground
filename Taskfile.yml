@@ -22,7 +22,7 @@ tasks:
   
   run-vm:
     cmds:
-      - go run . run-vm
+      - go run . run-vm {{.CLI_ARGS}}
   
   deploy:
     deps: 

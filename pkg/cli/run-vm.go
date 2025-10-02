@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -14,10 +15,18 @@ import (
 )
 
 func runVm(c *cmdRunVm) {
-	imgs, err := filepath.Glob("/workspace/data/img/*.img")
-	if err != nil {
-		log.Fatal().Err(err).Send()
+	var imgs []string
+
+	if c.Host != "" {
+		imgs = []string{fmt.Sprintf("/workspace/data/img/%v.img", c.Host)}
+	} else {
+		var err error
+		imgs, err = filepath.Glob("/workspace/data/img/*.img")
+		if err != nil {
+			log.Fatal().Err(err).Send()
+		}
 	}
+
 	log.Debug().Strs("imgs", imgs).Send()
 
 	func() {
@@ -71,6 +80,7 @@ func runVm(c *cmdRunVm) {
 					continue
 				}
 				k, v := strings.TrimSpace(tokens[0]), strings.TrimSpace(tokens[1])
+				log.Debug().Str("k", k).Str("v", v).Send()
 				proc := &procInfo{name: k, cmdline: v}
 
 				procs = append(procs, proc)
