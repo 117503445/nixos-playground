@@ -17,6 +17,12 @@ import (
 func runVm(c *cmdRunVm) {
 	var imgs []string
 
+	// TODO 增加 hosts 变量
+	// 如果 c.Host 为空，则 hosts 是 /workspace/data/img/%v.img 的 %v 列表
+	// 否则 hosts 是 [c.Host]
+
+	// TODO 根据 hosts 生成 imgs
+
 	if c.Host != "" {
 		imgs = []string{fmt.Sprintf("/workspace/data/img/%v.img", c.Host)}
 	} else {
@@ -81,6 +87,7 @@ func runVm(c *cmdRunVm) {
 				}
 				k, v := strings.TrimSpace(tokens[0]), strings.TrimSpace(tokens[1])
 				log.Debug().Str("k", k).Str("v", v).Send()
+				// TODO: k 必须以 hosts 中的某个元素，作为 start with
 				proc := &procInfo{name: k, cmdline: v}
 
 				procs = append(procs, proc)
