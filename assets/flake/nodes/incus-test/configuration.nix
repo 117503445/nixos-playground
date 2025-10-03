@@ -38,11 +38,37 @@
   };
 
   # 通过 systemd-network 配置网络 IP 和 DNS
-  systemd.network.networks.eth0 = {
-    address = [(builtins.fromTOML (builtins.readFile ./net.toml)).address];
-    gateway = [(builtins.fromTOML (builtins.readFile ./net.toml)).gateway];
-    matchConfig.Name = "eth0";
+  # systemd.network.networks.eth0 = {
+  #   address = [(builtins.fromTOML (builtins.readFile ./net.toml)).address];
+  #   gateway = [(builtins.fromTOML (builtins.readFile ./net.toml)).gateway];
+  #   matchConfig.Name = "eth0";
+  # };
+
+  systemd.network = {
+    enable = true;
+
+    # 不需要 links（因为你用 eth0，且已禁用 predictable naming）
+
+    networks = {
+      # 1. 创建网桥 br0，并配置原 eth0 的 IP
+      "10-br0" = {
+        matchConfig.Name = "br0";
+        # bridgeConfig.STP = false; # 可选，单网卡可关闭 STP
+        address = [(builtins.fromTOML (builtins.readFile ./net.toml)).address];
+        gateway = [(builtins.fromTOML (builtins.readFile ./net.toml)).gateway];
+      };
+
+      # 2. 将 eth0 加入网桥（不配 IP！）
+      "20-eth0" = {
+        matchConfig.Name = "eth0";
+        networkConfig.Bridge = "br0"; # 关键：加入 br0
+        networkConfig.DHCP = "no";
+        # 不要设置 address/gateway！
+      };
+    };
   };
+
+  boot.kernel.sysctl."net.ipv4.conf.all.forwarding" = true;
 
   disko.devices.disk.main.imageSize = lib.mkForce "10G";
 
