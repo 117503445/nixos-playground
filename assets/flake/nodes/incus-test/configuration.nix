@@ -27,10 +27,10 @@
     # 手动设置 DNS
     nameservers = ["223.5.5.5"];
     # 手动设置默认网关
-    # defaultGateway = {
-    #   address = "172.19.0.1";
-    #   interface = "eth0";
-    # };
+    defaultGateway = {
+      address = "172.19.0.1"; # TODO
+      interface = "br0";
+    };
     # 关闭 NixOS 自带的防火墙
     firewall.enable = false;
     # 禁用默认的网络接口命名规则，以允许自定义命名
@@ -46,6 +46,15 @@
 
   systemd.network = {
     enable = true;
+
+    netdevs."10-br0" = {
+      netdevConfig = {
+        Kind = "bridge";
+        Name = "br0";
+        # 可选：启用 STP（生成树协议），防止环路
+        # Bridge.STP = true;
+      };
+    };
 
     # 不需要 links（因为你用 eth0，且已禁用 predictable naming）
 
