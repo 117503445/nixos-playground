@@ -1,5 +1,6 @@
 # 2025.10.1
-FROM registry.cn-hangzhou.aliyuncs.com/117503445-mirror/dev@sha256:f8b9ad93e677282fe6cdbe009156172b9c123c361510705c07d4ee2444662f0a
+FROM 117503445/dev@sha256:d687094018fbb1285e007123955e53963ee3b5958816689ab48e8bceaf1ed6b1
+# FROM registry.cn-hangzhou.aliyuncs.com/117503445-mirror/dev@sha256:f8b9ad93e677282fe6cdbe009156172b9c123c361510705c07d4ee2444662f0a
 # FROM registry.ghi.117503445.top/117503445/dev@sha256:f8b9ad93e677282fe6cdbe009156172b9c123c361510705c07d4ee2444662f0a
 
 RUN pacman -Sy --noconfirm go-task docker qemu dhclient rsync kubectl kustomize nix
